@@ -1,0 +1,19 @@
+sudo iptables -F
+sudo iptables -P OUTPUT DROP
+sudo iptables -P FORWARD DROP
+sudo iptables -P INPUT DROP
+
+sudo iptables -A INPUT -s 10.0.17.11 -j LOG
+
+sudo iptables -A INPUT -i eth2 -p icmp -j ACCEPT
+sudo iptables -A OUTPUT -o eth2 -p icmp -j ACCEPT
+sudo iptables -D INPUT 1
+sudo iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
+sudo iptables -A INPUT -p icmp --icmp-type echo-reply -j ACCEPT
+sudo iptables -A OUTPUT -p icmp -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+sudo iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
+sudo iptables -A OUTPUT -m state --state NEW,ESTABLISHED -j ACCEPT
+sudo iptables -A INPUT -m state --state ESTABLISHED -j ACCEPT
+sudo iptables -A INPUT -p udp --dport 53 -m state --state NEW -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT
